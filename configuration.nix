@@ -14,6 +14,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Use latest kernel
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -92,13 +95,20 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = false; # powers up the default Bluetooth controller on boot
+  
+  # Apply GTK themes in wayland applications
+  programs.dconf.enable = true;
 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
 
+  # Enable driver for Radio SDR key
   hardware.rtl-sdr.enable = true;
+
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.jack = {
@@ -110,9 +120,22 @@
       gamemode
       mangohud
       obsidian
-      volatility3
       cmatrix
       gqrx
+      discord
+      spice
+      gimp
+      signal-desktop
+      p7zip
+      minetest
+      # Cyber
+      volatility3
+      ida-free
+      burpsuite
+      subfinder
+      httpx
+      nuclei
+      nmap
     ];
   };
 
@@ -125,10 +148,30 @@
 
   programs.gamemode.enable = true; # Necessary addition to the gamemode package
 
+  # Stylix styles (yaml themes generated with `nix build nixpkgs#base16-schemes`)
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
+
+  stylix.image = ./my-cool-wallpaper.png;
+
+  #stylix.fonts.sizes = {
+  #  applications = 12;
+  #  terminal = 15;
+  #  desktop = 10;
+  #  popups = 10;
+  #};
+
+  stylix.opacity = {
+    applications = 1.0;
+    terminal = .85;
+    desktop = 1.0;
+    popups = 1.0;
+  };
+  
+  #stylix.polarity = "dark" # "light" or "either"
 
   fonts.packages = with pkgs; [
-  (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-];
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+  ];
 
 
   # Enable automatic login for the user.
@@ -166,7 +209,6 @@
     touchegg
     nextcloud-client
     kdeconnect
-    nmap
     rtl-sdr-librtlsdr
     fzf
     pciutils
@@ -174,10 +216,23 @@
     protonup
     gcc
     xclip
+    go
+    virtualbox
+    locate
+    # Python packages
+    python312Packages.setuptools
+    python312Packages.pip
+    python312Packages.pyparsing
+    python312Packages.future
     # Zephyrus G14
     asusctl
     supergfxctl
   ];
+
+  environment.variables = [
+    PYTHONPATH = "${pkgs.python3}/bin/python";
+    EDITOR = neovim;
+  ]
 
   services.asusd.enable = true;
   services.supergfxd.enable = true;
