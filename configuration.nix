@@ -15,7 +15,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -55,6 +55,9 @@
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
+
+    # Necessary for lsp in nvchad
+    services.envfs.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
@@ -106,9 +109,13 @@
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
 
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    # Add any missing dl libs here
+  ];
+
   # Enable driver for Radio SDR key
   hardware.rtl-sdr.enable = true;
-
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.jack = {
@@ -122,12 +129,15 @@
       obsidian
       cmatrix
       gqrx
+      urh
       discord
       spice
       gimp
       signal-desktop
       p7zip
       minetest
+      hugo
+      normcap
       # Cyber
       volatility3
       ida-free
@@ -136,6 +146,7 @@
       httpx
       nuclei
       nmap
+      wireshark
     ];
   };
 
@@ -174,6 +185,12 @@
   ];
 
 
+  programs.neovim = {
+    withNodeJs = true;
+    withPython3 = true;
+    withRuby = true;
+  };
+
   # Enable automatic login for the user.
   services.xserver.displayManager.autoLogin.enable = true;
   services.xserver.displayManager.autoLogin.user = "jack";
@@ -184,7 +201,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    neovim
     xlsxgrep
     git
     wget
@@ -216,31 +232,54 @@
     protonup
     gcc
     xclip
+    fd
     go
-    virtualbox
-    locate
+    openssl
+    tree
+    vim
+    luajitPackages.jsregexp
+    vimPlugins.vimtex
+    vimPlugins.fzfWrapper
+    pyright
+    nixd
+    perl
+    cargo # gestionnaire de dépendances Rust
+    libclang
+    bluez
+    gnuradio
+    pulseview
+    nil # lsp language for nix-shells
     # Python packages
     python312Packages.setuptools
     python312Packages.pip
     python312Packages.pyparsing
     python312Packages.future
+    python312Packages.pynvim
     # Zephyrus G14
     asusctl
     supergfxctl
   ];
 
-  environment.variables = [
-    PYTHONPATH = "${pkgs.python3}/bin/python";
-    EDITOR = neovim;
-  ]
-
   services.asusd.enable = true;
   services.supergfxd.enable = true;
+
+
+  environment.sessionVariables = rec {
+    PYTHONPATH = "${pkgs.python3}/bin/python";
+  };
 
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATH =
       "\${HOME}/.steam/root/compatibilitytools.d";
   };
+
+
+  ## Virtualbox configuration
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "jack" ];
+  virtualisation.virtualbox.host.enableExtensionPack = true;
+  virtualisation.virtualbox.guest.enable = true;
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -267,6 +306,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.11"; # Did you read the comment?
+  system.stateVersion = "unstable"; # Did you read the comment?
 
 }
