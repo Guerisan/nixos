@@ -13,12 +13,19 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelParams = [ "mitigations=off" ];
 
   # Use latest kernel
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_6_8;
 
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  # Trim pour la maintenance et l'optimisation du ssd
+  services.fstrim.enable = true;
+
+  security.apparmor.enable = true;
+
+  networking.hostName = "JackdawNix"; # Define your hostname.
+  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.wireless.userControlled.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -60,16 +67,16 @@
     services.envfs.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
   #services.xserver.displayManager.gdm.enable = true;
   #services.xserver.displayManager.gdm.wayland = false;
   services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
-    layout = "fr";
-    xkbVariant = "";
+    xkb.layout = "fr";
+    xkb.variant = "";
   };
 
   # Configure console keymap
@@ -112,6 +119,7 @@
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # Add any missing dl libs here
+    libfzf
   ];
 
   # Enable driver for Radio SDR key
@@ -138,6 +146,7 @@
       minetest
       hugo
       normcap
+      simplex-chat-desktop
       # Cyber
       volatility3
       ida-free
@@ -147,6 +156,7 @@
       nuclei
       nmap
       wireshark
+      onlyoffice-bin_latest
     ];
   };
 
@@ -160,7 +170,11 @@
   programs.gamemode.enable = true; # Necessary addition to the gamemode package
 
   # Stylix styles (yaml themes generated with `nix build nixpkgs#base16-schemes`)
+  stylix.enable = true;
+  stylix.autoEnable = true;
   stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
+
+  stylix.targets.gtk.enable = true;
 
   stylix.image = ./my-cool-wallpaper.png;
 
@@ -189,11 +203,12 @@
     withNodeJs = true;
     withPython3 = true;
     withRuby = true;
+    defaultEditor = true;
   };
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "jack";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "jack";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -206,7 +221,7 @@
     wget
     nodejs
     unzip
-    python3
+    python312
     curl
     keepassxc
     powertop
@@ -239,7 +254,6 @@
     vim
     luajitPackages.jsregexp
     vimPlugins.vimtex
-    vimPlugins.fzfWrapper
     pyright
     nixd
     perl
@@ -249,6 +263,9 @@
     gnuradio
     pulseview
     nil # lsp language for nix-shells
+    tcpdump
+    perf-tools
+    kdePackages.qt6gtk2 # Fix incompatible qt lib mix
     # Python packages
     python312Packages.setuptools
     python312Packages.pip
@@ -259,6 +276,14 @@
     asusctl
     supergfxctl
   ];
+
+  services.ollama = {
+    enable = false;
+    acceleration = "cuda";
+    host = "0.0.0.0"; 
+    port = 11434;
+    openFirewall = true;
+  };
 
   services.asusd.enable = true;
   services.supergfxd.enable = true;
@@ -295,7 +320,7 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [ 11434 5201 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
