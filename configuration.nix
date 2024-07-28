@@ -7,16 +7,17 @@
 {
   imports =
     [ # Include the results of the hardware scan.
+       <nixos-hardware/asus/zephyrus/ga401>
       ./hardware-configuration.nix
     ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelParams = [ "mitigations=off" ];
+  boot.kernelParams = [ "mitigations=off" "acpi_osi=Linux" "pci=nomsi" ];
 
   # Use latest kernel
-  boot.kernelPackages = pkgs.linuxPackages_6_8;
+  boot.kernelPackages = pkgs.linuxPackages_6_9;
 
   # Trim pour la maintenance et l'optimisation du ssd
   services.fstrim.enable = true;
@@ -24,7 +25,7 @@
   security.apparmor.enable = true;
 
   networking.hostName = "JackdawNix"; # Define your hostname.
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.wireless.userControlled.enable = true;
 
   # Configure network proxy if necessary
@@ -63,20 +64,27 @@
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
 
-    # Necessary for lsp in nvchad
-    services.envfs.enable = true;
+  # Necessary for lsp in nvchad
+  services.envfs.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-  #services.xserver.displayManager.gdm.enable = true;
-  #services.xserver.displayManager.gdm.wayland = false;
   services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
     xkb.layout = "fr";
     xkb.variant = "";
+  };
+
+  # Prints a recap at the end of nixos-rebuild
+  system.activationScripts.diff = {
+    supportsDryActivation = true;
+    text = ''
+     ${pkgs.nvd}/bin/nvd --nix-bin-dir=${pkgs.nix}/bin diff \
+           /run/current-system "$systemConfig"
+    '';
   };
 
   # Configure console keymap
@@ -86,7 +94,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
+  #sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -119,8 +127,9 @@
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # Add any missing dl libs here
-    libfzf
   ];
+
+  #virtualisation.docker.enable = true;
 
   # Enable driver for Radio SDR key
   hardware.rtl-sdr.enable = true;
@@ -129,7 +138,7 @@
   users.users.jack = {
     isNormalUser = true;
     description = "Professeur Jack";
-    extraGroups = [ "networkmanager" "wheel" "plugdev" ];
+    extraGroups = [ "networkmanager" "wheel" "plugdev" "docker" ];
     packages = with pkgs; [
       steam
       gamemode
@@ -146,7 +155,6 @@
       minetest
       hugo
       normcap
-      simplex-chat-desktop
       # Cyber
       volatility3
       ida-free
@@ -156,7 +164,7 @@
       nuclei
       nmap
       wireshark
-      onlyoffice-bin_latest
+      hydra-cli
     ];
   };
 
@@ -201,7 +209,7 @@
 
   programs.neovim = {
     withNodeJs = true;
-    withPython3 = true;
+    #withPython3 = true;
     withRuby = true;
     defaultEditor = true;
   };
@@ -228,17 +236,14 @@
     mpv
     gthumb
     firefox
+    librewolf
     wget
-    neofetch
     fish
-    wine
     ripgrep
     eza
     bottom
     traceroute
     kitty
-    touchegg
-    nextcloud-client
     kdeconnect
     rtl-sdr-librtlsdr
     fzf
@@ -260,22 +265,47 @@
     cargo # gestionnaire de dépendances Rust
     libclang
     bluez
-    gnuradio
+    ffmpeg
+    tcpflow
+    xorg.xhost
+    feh
+    gnumake
+    #gnuradio
     pulseview
     nil # lsp language for nix-shells
     tcpdump
     perf-tools
+    file
     kdePackages.qt6gtk2 # Fix incompatible qt lib mix
-    # Python packages
-    python312Packages.setuptools
-    python312Packages.pip
-    python312Packages.pyparsing
-    python312Packages.future
-    python312Packages.pynvim
-    # Zephyrus G14
     asusctl
     supergfxctl
+
+    # support both 32- and 64-bit applications
+    wineWowPackages.stable
+    # support 32-bit only
+    wine
+    # support 64-bit only
+    (wine.override { wineBuild = "wine64"; })
+    # support 64-bit only
+    wine64
+    # wine-staging (version with experimental features)
+    wineWowPackages.staging
+    # winetricks (all versions)
+    winetricks
+    # native wayland support (unstable)
+    wineWowPackages.waylandFull
   ];
+
+ # nixpkgs.config.packageOverrides = pkgs: {
+ #   nextcloud-client = pkgs.nextcloud-client.overrideAttrs (oldAttrs: {
+ #     src = pkgs.fetchFromGitHub {
+ #       # Fix nextcloud-client version
+ #       owner = "nextcloud";
+ #       repo = "desktop";
+ #       rev = "v3.13.1";  
+ #     };
+ #   });
+ # };
 
   services.ollama = {
     enable = false;
@@ -300,10 +330,10 @@
 
 
   ## Virtualbox configuration
-  virtualisation.virtualbox.host.enable = true;
-  users.extraGroups.vboxusers.members = [ "jack" ];
-  virtualisation.virtualbox.host.enableExtensionPack = true;
-  virtualisation.virtualbox.guest.enable = true;
+  #virtualisation.virtualbox.host.enable = true;
+  #users.extraGroups.vboxusers.members = [ "jack" ];
+  #virtualisation.virtualbox.host.enableExtensionPack = true;
+  #virtualisation.virtualbox.guest.enable = true;
 
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -316,13 +346,11 @@
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 11434 5201 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
@@ -331,6 +359,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "unstable"; # Did you read the comment?
+  system.stateVersion = "24.05"; # Did you read the comment?
 
 }
