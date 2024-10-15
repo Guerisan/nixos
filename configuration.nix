@@ -156,6 +156,13 @@
       urh
       multimon-ng
       tor-browser
+      mapscii
+      nextcloud-client
+      asciinema
+      asciiquarium-transparent
+      drawio
+      speedtest-cli
+      axel
       # Cyber
       volatility3
       #ida-free
@@ -166,7 +173,7 @@
       nmap
       wireshark
       hydra-cli
-      nextcloud-client
+      dig
     ];
   };
 
@@ -252,6 +259,7 @@
     opencv
     ffmpegthumbs
     dxvk_2
+    pipx
 
     #DE 
     waybar
