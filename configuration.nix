@@ -288,6 +288,8 @@
     file
     asusctl
     supergfxctl
+    sshfs
+    yt-dlp
     
     wineWowPackages.stable
     winetricks
@@ -329,10 +331,10 @@
 
 
   ## Virtualbox configuration
-  #virtualisation.virtualbox.host.enable = true;
-  #users.extraGroups.vboxusers.members = [ "jack" ];
-  #virtualisation.virtualbox.host.enableExtensionPack = true;
-  #virtualisation.virtualbox.guest.enable = true;
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "jack" ];
+  virtualisation.virtualbox.host.enableExtensionPack = true;
+  virtualisation.virtualbox.guest.enable = true;
 
 
   # Some programs need SUID wrappers, can be configured further or are
