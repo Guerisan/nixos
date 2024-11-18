@@ -4,7 +4,8 @@
 
 { config, pkgs, lib, inputs, ... }:
 
-{
+ 
+  {
 
   imports =
     [ # Include the results of the hardware scan.
@@ -17,9 +18,10 @@
   ## Modules locaux activables
   m_steam.enable = true;
   m_stylix.enable = true;
-  m_plasma.enable = true;
-  m_hyprland.enable = false;
-  
+  m_plasma.enable = false;
+  m_hyprland.enable = true;
+  #m_nixvim.enable = true;
+
   
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -163,6 +165,7 @@
       drawio
       speedtest-cli
       axel
+      qbittorrent
       # Cyber
       volatility3
       #ida-free
@@ -174,6 +177,8 @@
       wireshark
       hydra-cli
       dig
+      responder
+      socat
     ];
   };
 
@@ -182,6 +187,7 @@
   fonts.packages = with pkgs; [
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
     montserrat
+    lato
   ];
 
   # Enable automatic login for the user.
@@ -199,8 +205,6 @@
       mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
       })
     )
-
-    xlsxgrep
     git
     wget
     nodejs
@@ -220,7 +224,7 @@
     bottom
     traceroute
     kitty
-    kdeconnect
+    kdePackages.kdeconnect-kde
     rtl-sdr-librtlsdr
     fzf
     pciutils
@@ -290,6 +294,7 @@
     supergfxctl
     sshfs
     yt-dlp
+    nix-output-monitor # Tree visualisation on install
     
     wineWowPackages.stable
     winetricks
@@ -319,19 +324,21 @@
   services.asusd.enable = true;
   services.supergfxd.enable = true;
 
-
-  environment.sessionVariables = rec {
-    PYTHONPATH = "${pkgs.python3}/bin/python";
-  };
-
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATH =
       "\${HOME}/.steam/root/compatibilitytools.d";
   };
 
+  environment.variables = {
+    EDITOR = "nvim";
+  };
+
+  programs.neovim = {
+    enable = true;
+  };
 
   ## Virtualbox configuration
-  virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.enable = false;
   users.extraGroups.vboxusers.members = [ "jack" ];
   virtualisation.virtualbox.host.enableExtensionPack = true;
   virtualisation.virtualbox.guest.enable = true;
