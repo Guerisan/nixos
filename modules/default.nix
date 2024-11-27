@@ -8,6 +8,7 @@
   ./audio.nix
   ./plasma.nix
   ./hyprland.nix
+  ./vbox.nix
   #./fonts/europeext.nix
   ];
 

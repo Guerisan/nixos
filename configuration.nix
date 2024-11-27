@@ -20,7 +20,7 @@
   m_stylix.enable = true;
   m_plasma.enable = false;
   m_hyprland.enable = true;
-  #m_nixvim.enable = true;
+  m_vbox.enable = false;
 
   
   # Bootloader.
@@ -111,7 +111,7 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot = false; # powers up the default Bluetooth controller on boot
+  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
   services.blueman.enable = true;
   
   # Apply GTK themes in wayland applications
@@ -166,8 +166,15 @@
       speedtest-cli
       axel
       qbittorrent
+      grc
+      lnav
       # Cyber
       volatility3
+      testdisk
+      binwalk
+      foremost
+      networkminer
+      zeek
       #ida-free
       burpsuite
       subfinder
@@ -336,12 +343,6 @@
   programs.neovim = {
     enable = true;
   };
-
-  ## Virtualbox configuration
-  virtualisation.virtualbox.host.enable = false;
-  users.extraGroups.vboxusers.members = [ "jack" ];
-  virtualisation.virtualbox.host.enableExtensionPack = true;
-  virtualisation.virtualbox.guest.enable = true;
 
 
   # Some programs need SUID wrappers, can be configured further or are
