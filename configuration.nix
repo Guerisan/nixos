@@ -144,6 +144,7 @@
       discord
       spice
       gimp
+      inkscape
       signal-desktop
       p7zip
       minetest
@@ -168,6 +169,7 @@
       qbittorrent
       grc
       lnav
+      universal-android-debloater
       # Cyber
       volatility3
       testdisk
@@ -236,7 +238,6 @@
     fzf
     pciutils
     usbutils
-    protonup
     protontricks
     gcc
     xclip
@@ -259,9 +260,7 @@
     feh
     gnumake
     gparted
-    pavucontrol
     wev # Find key codes
-    brightnessctl
     bat
     killall
     lz4 # Lib for lampray mod manager
@@ -271,19 +270,9 @@
     ffmpegthumbs
     dxvk_2
     pipx
+    unrar
 
     #DE 
-    waybar
-    dunst
-    libnotify
-    swww
-    rofi-wayland
-    networkmanagerapplet
-    grim # Screeshot utility
-    slurp # Select utility
-    wl-clipboard # xclip alternative
-    swaylock-effects
-    bibata-cursors
 
     # https://github.com/CachyOS/CachyOS-PKGBUILDS/blob/master/cachyos-gaming-meta/PKGBUILD
     giflib

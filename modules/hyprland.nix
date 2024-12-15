@@ -9,6 +9,21 @@
 
   config = lib.mkIf config.m_hyprland.enable {
 
+    environment.systemPackages = with pkgs; [
+      waybar
+      dunst
+      libnotify
+      swww
+      rofi-wayland
+      networkmanagerapplet
+      grim # Screeshot utility
+      slurp # Select utility
+      wl-clipboard # xclip alternative
+      swaylock-effects
+      bibata-cursors
+      brightnessctl
+    ];
+
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
@@ -34,7 +49,8 @@
 #Hint electron apps to use wayland
       NIXOS_OZONE_WL = "1";
     };
-    };
+
+  };
 
 }
 

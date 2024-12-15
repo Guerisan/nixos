@@ -9,6 +9,11 @@
 
   config = lib.mkIf config.m_steam.enable {
 
+    environment.systemPackages = with pkgs; [
+      protonup
+      r2modman
+    ];
+
     programs.steam = {
       enable = true;
       gamescopeSession.enable = true; # Start the games in an optimal microcompositor
@@ -24,4 +29,5 @@
     programs.gamescope.capSysNice = false;
   };
 
+  
 }

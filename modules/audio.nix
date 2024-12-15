@@ -8,6 +8,11 @@
   };
 
   config = lib.mkIf config.m_audio.enable {
+
+    environment.systemPackages = with pkgs; [
+      pavucontrol
+    ];
+
     # Enable sound with pipewire.
     #sound.enable = true;
     hardware.pulseaudio.enable = false;
@@ -19,6 +24,7 @@
       alsa.support32Bit = true;
       pulse.enable = true;
     };
+
   };
 
 }

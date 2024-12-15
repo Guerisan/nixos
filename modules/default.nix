@@ -9,7 +9,7 @@
   ./plasma.nix
   ./hyprland.nix
   ./vbox.nix
-  #./fonts/europeext.nix
+  # ./fonts/europeext.nix
   ];
 
 }

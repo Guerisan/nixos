@@ -37,7 +37,6 @@
         modules = [
           ./configuration.nix
           ./modules/default.nix
-          ./vbox.nix
           home-manager.nixosModules.default
           stylix.nixosModules.stylix
         ];
